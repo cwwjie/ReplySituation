@@ -113,7 +113,7 @@ this 提供了一种更优雅的方式来隐式“传递”一个对象引用，
 
 ###### this常见误区
 
-####### 指向自身
+###### 指向自身
 
 ```JavaScript
 
@@ -139,7 +139,7 @@ this 提供了一种更优雅的方式来隐式“传递”一个对象引用，
 	console.log( foo.count ); // 0
 ```
 
-####### 指向作用域
+###### 指向作用域
 
 某些情况下是正确的  
 实际虽然 this 在任何情况下都不指向函数的词法作用域。  
@@ -167,7 +167,7 @@ this 提供了一种更优雅的方式来隐式“传递”一个对象引用，
 * this 就是记录的其中一个属性
 * 会在函数执行的过程中用到。// _this 是在运行时进行绑定的 （并不是在编写时绑定_
 
-####### 首先要明白函数在哪里被调用？  
+###### 首先要明白函数在哪里被调用？  
 最重要的是分析调用栈（就是为了到达当前执行位置所调用的所有函数）。
 
 ```JavaScript
@@ -186,13 +186,13 @@ this 提供了一种更优雅的方式来隐式“传递”一个对象引用，
 	baz(); // <-- baz 的调用位置
 ```
 
-####### 其次要明白 this 绑定规则？
+###### 其次要明白 this 绑定规则？
 
 1. 默认绑定（最常用函数调用
 2. 隐式绑定
 	* 隐式丢失
 
-####### 隐式绑定
+###### 隐式绑定
 
 ```JavaScript
 	
@@ -206,7 +206,7 @@ this 提供了一种更优雅的方式来隐式“传递”一个对象引用，
 	obj.foo(); // 2
 ```
 
-####### 隐式丢失  
+###### 隐式丢失  
 
 例子一：  
 引用丢失 隐式绑定  
@@ -244,7 +244,7 @@ this 提供了一种更优雅的方式来隐式“传递”一个对象引用，
 	doFoo( obj.foo ); // "oops, global"
 ```
 
-####### 显式绑定
+###### 显式绑定
 
 * call();  
 * apply();
@@ -287,7 +287,7 @@ bind()；硬绑定:
 
 > Tip ES6的 Array.prototype.forEach(callback(currentValue, index, array){...}, this); 也可以绑定this。
 
-####### new绑定
+###### new绑定
 
 1. 接创建（或者说构造）一个全新的对象。
 2. 这个新对象会被执行 [[ 原型 ]] 连。
@@ -303,11 +303,19 @@ bind()；硬绑定:
 	console.log( bar.a ); // 2
 ```
 
-####### 箭头函数
+###### 箭头函数
 
 一个箭头函数表达式的语法比一个函数表达式更短，并且不绑定自己的 this，arguments，super或 new.target。
 这些函数表达式最适合用于非方法函数，并且它们不能用作构造函数。
 
+那么什么情况下该使用箭头函数？
+
+1. 箭头函数适合于无复杂逻辑或者无副作用的纯函数场景下，例如用在map、reduce、filter的回调函数定义中；
+2. 不要在最外层定义箭头函数，因为在函数内部操作this会很容易污染全局作用域。最起码在箭头函数外部包一层普通函数，将this控制在可见的范围内；
+3. 如开头所述，箭头函数最吸引人的地方是简洁。如果你经常编写 this 风格的代码，但是绝大部分时候都会使用 self = this 或者箭头函数
+来否定 this 机制。在有多层函数嵌套的情况下，箭头函数的简洁性并没有很大的提升，反而影响了函数的作用范围的识别度，这种情况不建议使用箭头函数。
+
+例子一：  
 ```JavaScript
 
 	function foo() {
@@ -316,7 +324,9 @@ bind()；硬绑定:
 	  b()
 	}
 	foo()  // 1
+
 	// 与下面代码是等价的
+
 	function foo() {
 	  this.a = 1
 	  let self = this
@@ -325,13 +335,6 @@ bind()；硬绑定:
 	}
 	foo()  // 1
 ```
-
-那么什么情况下该使用箭头函数？
-
-1. 箭头函数适合于无复杂逻辑或者无副作用的纯函数场景下，例如用在map、reduce、filter的回调函数定义中；
-2. 不要在最外层定义箭头函数，因为在函数内部操作this会很容易污染全局作用域。最起码在箭头函数外部包一层普通函数，将this控制在可见的范围内；
-3. 如开头所述，箭头函数最吸引人的地方是简洁。如果你经常编写 this 风格的代码，但是绝大部分时候都会使用 self = this 或者箭头函数
-来否定 this 机制。在有多层函数嵌套的情况下，箭头函数的简洁性并没有很大的提升，反而影响了函数的作用范围的识别度，这种情况不建议使用箭头函数。
 
 > 参考：[少年，不要滥用箭头函数啊 ](https://jingsam.github.io/2016/12/08/things-you-should-know-about-arrow-functions.html)
 
@@ -353,6 +356,17 @@ bind()；硬绑定:
 
 对象只是带有属性和方法的特殊数据类型
 
+#### 相关的词汇
+
+* [JavaScript中 构造函数](#gouzhaohans)
+* JavaScript对象的[constructor属性](#constructor)
+* JavaScript对象特殊的 [[Prototype]] 内置属性
+
+
+#### JavaScript对象特殊的 [[Prototype]] 内置属性
+
+几乎所有的对象在创建时 [[Prototype]] 属性都会被赋予一个非空的值。
+
 #### 两种定义方式
 
 1. 对象字面量  
@@ -361,26 +375,24 @@ var myObj = {key: value};
 var myObj = new Object();  
 myObj.key = value;
 
-#### 基本类型
-
-* string
-* number
-* boolean
-* null
-* undefined
-* object
-
-#### 内置对象
-
-* String
-* Number
-* Boolean
-* Object
-* Function
-* Array
-* Date
-* RegExp
-* Error
+#### 类型
+* 基本类型
+	* string
+	* number
+	* boolean
+	* null
+	* undefined
+	* object
+* 内置对象
+	* String
+	* Number
+	* Boolean
+	* Object
+	* Function
+	* Array
+	* Date
+	* RegExp
+	* Error
 
 这些内置对象从表现形式来说很像其他语言中的类型（type）或者类（class），比如 C# 中的 String 类。  
 但是在 JavaScript 中，它们实际上只是一些内置函数。  
@@ -406,37 +418,136 @@ var myObject = {a: 2};
 “属性访问”——myObject.a;  
 “键访问”——myObject["a"];  
 
+#### 如何复制一个对象？
 
-#### 相关的词汇
+如果没有 function： var newObj = JSON.parse( JSON.stringify( someObj ) );  
+ES6的浅拷贝 Object.assign(..) 方法；  
 
-* [JavaScript中 构造函数](#gouzhaohans)
-* JavaScript对象的[constructor属性](#constructor)
-* JavaScript对象特殊的 [[Prototype]] 内置属性
+```JavaScript
 
+	function anotherFunction() { /*..*/ }
+	
+	var anotherObject = {
+		c: true
+	};
+	
+	var anotherArray = [];
+	
+	var myObject = {
+		a: 2,
+		b: anotherObject, // 引用，不是复本！
+		c: anotherArray, // 另一个引用！
+		d: anotherFunction
+	};
+	
+	anotherArray.push( anotherObject, myObject );
+	
+	// ES6的方法 浅复制
+	var newObj = Object.assign( {}, myObject );
+	// 遍历myObject可枚举的自有键
+	
+	newObj.a; // 2
+	newObj.b === anotherObject; // true
+	newObj.c === anotherArray; // true
+	newObj.d === anotherFunction; // true
+```
+#### ES5 属性描述符
 
-#### JavaScript对象特殊的 [[Prototype]] 内置属性
+```JavaScript
 
-几乎所有的对象在创建时 [[Prototype]] 属性都会被赋予一个非空的值。
+	var myObject = {
+		a:2
+	};
+	// 获取 属性特性
+	Object.getOwnPropertyDescriptor( myObject, "a" );
+	// {
+	// value: 2,
+	// writable: true,	// writable 决定是否可以修改属性的值。
+	// enumerable: true, // 属性是否会出现在对象的属性枚举中，比如说 for..in 循环。
+	// configurable: true // 只要属性是可配置的，就可以使用 defineProperty(..) 方法来修改属性描述符
+	// }
+	// 对属性特性进行配置
+	Object.defineProperty( myObject, "b", {
+		value: 3,
+		writable: true,
+		configurable: true,
+		enumerable: true
+	} );
+	myObject.b; // 3
+```
 
+#### [[Get]] 和 [[Put]] 以及 ES5访问描述符（getter 和 setter）
 
+[[Get]] 会向着原型链上寻找  
+[[Put]] 实际的行为取决于许多因素，如果对象中不存在这个属性，[[Put]] 操作会更加复杂。  
+例如:myObject.foo = "bar";会先在原型链上寻找，如果找到就赋值，如果没找到foo 就会被直接添加到 myObject 上。  
 
+JavaScript 会忽略（getter 和 setter）的 value 和 writable 特性，关心 configurable 和 enumerable 特性。  
+（getter 和 setter） 实际上是隐藏函数，  
 
+如何使用getter？ _通常来说 getter 和 setter 是成对出现的（只定义一个的话
+通常会产生意料之外的行为）_  
 
+```JavaScript
+
+	//用 对象文字语法 方式 定义一个 getter
+	var myObject = {
+		get a() {
+			return 2;
+		}
+	};
+	// 用 defineProperty 方式
+	Object.defineProperty(
+		myObject,
+		"b", 
+		{
+			get: function(){ return this.a * 2 },// 给 b 设置一个 getter
+			enumerable: false// 确保 b 会出现在对象的属性列表中
+		}
+	);
+	console.log(myObject.a)
+	console.log(myObject.b)
+	// 这个方法可以用来检测一个对象是否含有特定的自身属性；该方法会忽略掉那些从原型链上继承到的属性。
+	myObject.hasOwnProperty('a');   // true
+	// propertyIsEnumerable(..) 会检查属性是否直接存在于对象中（该方法会忽略掉那些从原型链上继承到的属性。）并且 enumerable:true 
+	myObject.propertyIsEnumerable( "a" ); // true
+	// 包含所有可枚举属性 但是只会查找对象直接包含的属性 原型链
+	Object.keys( myObject ); // ["a"]
+	// ，包含所有属性，无论它们是否可枚举。但是只会查找对象直接包含的属性 原型链
+	Object.getOwnPropertyNames( myObject ); // ["a", "b"]
+```
+
+setter 属性的设置和屏蔽  
+
+通常来说，使用屏蔽得不偿失，所以应当尽量避免使用。  
+
+```JavaScript
+
+	var anotherObject = {
+		a:2
+	};
+	var myObject = Object.create( anotherObject );
+	anotherObject.a; // 2
+	myObject.a; // 2
+	anotherObject.hasOwnProperty( "a" ); // true
+	myObject.hasOwnProperty( "a" ); // false
+	myObject.a++; // 隐式屏蔽！
+	anotherObject.a; // 2
+	myObject.a; // 3
+	myObject.hasOwnProperty( "a" ); // true
+```
 ***
+
+
+
+
+
+
 ## <div id="Prototype_chain">原型链</div>
 
 JavaScript 常被描述为一种基于原型的语言 (prototype-based language)  
 
-#### 相关的词汇
-
-* 对象的内部原型（隐式原型） // _JavaScript对象 ____ proto __ 属性_
-	* 构成**原型链**
-* 构造器的原型（显式原型） // _JavaScript仅函数拥有 prototype属性, 准确来说是构造**函数所特有**。_
-	* 但是 JavaScript对象也拥有 原型 [[prototype]]
-		* 源于其[constructor属性](#constructor)所拥有的 prototype
-		* [[prototype]] 和 prototype 不是同一个东西
-
-#### 原型链作用：面向对象
+#### 原型链作用：模仿类
 
 ```JavaScript
 
@@ -451,15 +562,35 @@ JavaScript 常被描述为一种基于原型的语言 (prototype-based language)
 		  return privename;
 		}
 	}
-	// 共有静态属性和方法（给对象添加新的属性
-	packaging.pubilname ='Darren code';
-	packaging.alertName =function(){...}
+	// 共有静态属性和方法（给对象添加新的属性 是内置对象 无关继承
+	packaging.pubilname = 'Darren code';
+	packaging.alertName = function(){...}
 	// 共有属性和方法（直接链在 prototype(对象) 上的属性和方法
-	// 引擎会沿着 原型链 向上寻找
+	// 引擎 [[get]] 会沿着 原型链 向上寻找
 	packaging.prototype = {
 		init:function(){...}
 	}
 ```
+
+#### 相关的词汇
+
+* 对象的内部原型（隐式原型） // _JavaScript对象 ____ proto __ 属性_
+	* 构成**原型链**
+* 构造器的原型（显式原型） // _JavaScript仅函数拥有 prototype属性(不可枚举), 准确来说是构造**函数所特有**。_
+	* 但是 JavaScript对象也拥有 原型 [[prototype]]
+		* 源于其[constructor属性](#constructor)所拥有的 prototype
+		* [[prototype]] 和 prototype 不是同一个东西
+
+#### 为什么一个对象需要关联_(原型链)_到另一个对象？这样做有什么好处？
+
+因为 JavaScript 和面向类的语言不同。JavaScript它并没有类来作为对象的抽象模式。  
+JavaScript 中只有对象。  
+字面上的意思“面向对象”的语言，即是以不通过类，直接创建对象！  
+new Fun() 这个函数调用实际上并没有直接创建关联，这个关联只是一个意外的副作用。  
+Object.create(..)可以更加直接的方法创建关联    
+一般称为 原型继承 它常常被视为动态语言版本的类继承。但是这个术语严重影响了大家对于 JavaScript 机制真实原理的理解。  
+委托更适合更加准确地描述 JavaScript 中对象的关联机制。  
+
 
 #### 所有"构造器/函数"的__ proto__(对象的内部原型)都指向 Function.prototype，它是一个空函数（Empty function）
 
@@ -537,7 +668,7 @@ Function.prototype.__ proto__ === Object.prototype  // true
 ###### <div id="constructor">JavaScript对象也拥有 [[prototype]] 是源于其 constructor属性 所拥有的prototype</div>
 
 constructor属性 返回一个指向创建了该对象原型的函数引用。  
-JavaScript中任意对象都有一个内置属性[[prototype]]  
+JavaScript中任意对象都有一个内置属性 [[prototype]]  
 ES5之前没有标准的方法访问这个内置属性，但是可以通过 __ proto__  
 ES5有了对于这个内置属性标准的Get方法Object.getPrototypeOf()
 
@@ -555,7 +686,7 @@ ES5有了对于这个内置属性标准的Get方法Object.getPrototypeOf()
 	console.log(p.__proto__ === p.constructor.prototype) // true
 ```
 
-###### constructor属性 实际运用的例子！
+###### .constructor 属性 实际运用的例子！
 
 ```JavaScript  
 
@@ -572,14 +703,14 @@ ES5有了对于这个内置属性标准的Get方法Object.getPrototypeOf()
 	// p.constructor 是 Person 返回一个指向创建了该对象原型的函数引用。
 ```
 
-###### ECMAScript 2015 中的 类(class)
+#### ECMAScript 2015 中的 类(class)
 
 ES6中的类主要是 JavaScript 现有的基于原型的继承的语法糖。  
 ES6提供了一个更简单和更清晰的语法来创建对象并处理继承。   
-像构造函数一样，类实际上也是个特殊的函数。  
+像构造函数一样，ECMAScript 2015 中的 类(class) 实际上也是个特殊的 函数。  
 类语法有两个组成部分： *类表达式* 和 *类声明* 。
 
-####### 如何定义类？ 
+###### 如何定义类？ 
 
 普通定义一个类
 
@@ -590,6 +721,11 @@ ES6提供了一个更简单和更清晰的语法来创建对象并处理继承�
 	    this.height = height;
 	    this.width = width;
 	  }
+	}
+	// 同等于
+	function Rectangle(height, width){
+	    this.height = height;
+	    this.width = width;
 	}
 ```
 
@@ -616,14 +752,19 @@ ES6提供了一个更简单和更清晰的语法来创建对象并处理继承�
 
 > 注意：函数声明和类声明之间的一个重要区别是函数声明会声明提升，类声明不会。
 
-####### 如何使用类体和方法定义？ 
+###### 如何使用类体和方法定义？ 
 
-构造函数 可以 用于创建和初始化使用一个类创建的一个对象。  
-一个 类 中只能有一个指定的 “constructor” （构造器）方法。  
-一个构造函数可以使用 super 关键字来调用一个父类的构造函数。   
-如果没有显式指定构造方法，则会添加默认的 constructor 方法。  
+> 注意这里的 “constructor” （构造器）方法 与 对象的 .constructor 属性（不可枚举） 是不一样的。
 
-具体应用：  
+* 一个 class 中只能有一个指定的 “constructor” （构造器）方法。
+	* 通过new命令生成对象实例时，自动调用该方法。
+* “constructor” 方法可以用于创建和初始化使用一个类创建的一个对象。  
+* “constructor” 方法可以使用 super 关键字来调用一个父类的构造函数。   
+* 如果没有显式指定构造方法，则会添加默认的 “constructor” 方法。
+	* “constructor” 方法默认返回实例对象（即this）。
+	* 如果 “constructor” 函数返回一个全新的对象，结果就会导致实例对象不是父类的实例。  
+
+具体应用（原型调用）：  
 ```JavaScript
 
 	class Rectangle {
@@ -631,7 +772,7 @@ ES6提供了一个更简单和更清晰的语法来创建对象并处理继承�
 	    this.height = height;
 	    this.width = width;
 	  } 
-	  get area() {
+	  get area() { //与 ES5 一样， 在 Class 内部可以使用get和set关键字， 对某个属性设置存值函数和取值函数， 拦截该属性的存取行为。
 	    return this.calcArea()
 	  }
 	  calcArea() {
@@ -643,8 +784,77 @@ ES6提供了一个更简单和更清晰的语法来创建对象并处理继承�
 	console.log(square.area);// 100
 ```
 
+静态方法：  
+```JavaScript
+
+	class Point {
+	    constructor(x, y) {
+	        this.x = x;
+	        this.y = y;
+	    }
+	
+	    static distance(a, b) {
+	        const dx = a.x - b.x;
+	        const dy = a.y - b.y;
+	
+	        return Math.hypot(dx, dy);
+	    }
+	}
+	
+	const p1 = new Point(5, 5);
+	const p2 = new Point(10, 10);
+	
+	console.log(Point.distance(p1, p2));// 不需要实例化
+```
+
+使用 extends 创建子类：  
+```JavaScript
+
+	class Animal { 
+	  constructor(name) {
+	    this.name = name;
+	  }
+	  
+	  speak() {
+	    console.log(this.name + ' makes a noise.');
+	  }
+	}
+	
+	class Dog extends Animal {
+	  speak() {
+	    console.log(this.name + ' barks.');
+	  }
+	}
+	
+	var d = new Dog('Mitzie');
+	// 'Mitzie barks.'
+	d.speak();
+```
+##### 利用隐式混入模仿 类的复制  
+```JavaScript
+
+	var Something = {
+		cool: function() {
+			this.greeting = "Hello World";
+			this.count = this.count ? this.count + 1 : 1;
+		}
+	};
+	var Another = {
+		cool: function() {
+			// 隐式把 Something 混入 Another
+			Something.cool.call( this ); // 可以测试这里的this是指什么？
+		}
+	};
+	Another.cool();
+	Another.greeting; // "Hello World"
+	Another.count;    // 1（count 不是共享状态）
+```
+
+
+
 
 *** 
+
 
 
 
@@ -656,7 +866,7 @@ ES6提供了一个更简单和更清晰的语法来创建对象并处理继承�
 ######　JavaScript中构造函数
 * 只是使用 new 操作符时被调用的函数。  
 * 并不会属于某个类，也不会实例化一个类。
-* 甚至都不能说是一种特殊的函数类型，它们只是被 new 操作符调用的普通函数而已。  
+* 甚至都不能说是一种特殊的函数类型，它们只是仅当使用 new 时，函数调用会变成“构造函数调用”。  
 
 ######　当代码 new fun(...) 执行时：  
 
