@@ -265,6 +265,19 @@ call()；硬绑定:
 	bar(); // 2
 	setTimeout( bar, 100 ); // 2
 	bar.call( window ); // 2
+	// 另外一个例子
+	function cat(){
+	
+	}
+	cat.prototype={
+		food:"fish",
+		say: function(){console.log("I love "+this.food);}
+	}
+	var blackCat = new cat;
+	blackCat.say();
+	
+	var whiteDog = {food:"bone"}
+	blackCat.say.call(whiteDog);
 ```
 
 bind()；硬绑定:  
@@ -553,33 +566,36 @@ JavaScript 常被描述为一种基于原型的语言 (prototype-based language)
 
 	var packaging = function(){
 		// 私有属性和方法
+		// 会被 new操作 的 this 闭包储存起来，内存未释放；
 		var privename = 'Darren';
 		var method = function(){...}
-		// 当代码 new fun(...) 执行时, 活动记录（执行上下文）(this)会被指定为这个新实例
 		// 特权属性和方法
+		// 当代码 new fun(...) 执行时, 活动记录（执行上下文）(this)会被指定为这个新实例
 		this.title ='JavaScript Design Patterns' ;
 		this.getName =function(){
 		  return privename;
 		}
 	}
-	// 共有静态属性和方法（给对象添加新的属性 是内置对象 无关继承
+	// 共有静态属性和方法
+	// 其实就是给对象添加新的属性引用 是内置对象 无关继承
 	packaging.pubilname = 'Darren code';
 	packaging.alertName = function(){...}
 	// 共有属性和方法（直接链在 prototype(对象) 上的属性和方法
-	// 引擎 [[get]] 会沿着 原型链 向上寻找
-	packaging.prototype = {
-		init:function(){...}
+	// 引擎 [[get]] 操作 会沿着 [[Prototype]] 关联的对象 向上寻找到这个 init
+	// 因为是 new操作 所以this是绑定的，对象所以可以通过this进行访问 packaging 里面的 this.title；
+	packaging.prototype.init = function(){
+		retrun this.title;
 	}
 ```
 
 #### 相关的词汇
 
-* 对象的内部原型（隐式原型） // _JavaScript对象 ____ proto __ 属性_
-	* 构成**原型链**
-* 构造器的原型（显式原型） // _JavaScript仅函数拥有 prototype属性(不可枚举), 准确来说是构造**函数所特有**。_
-	* 但是 JavaScript对象也拥有 原型 [[prototype]]
-		* 源于其[constructor属性](#constructor)所拥有的 prototype
-		* [[prototype]] 和 prototype 不是同一个东西
+* 对象的内部原型（隐式原型） // JavaScript对象 [[prototype]] 机制
+	* 构成 **原型链**
+	* [[Get]] 操作会查找对象内部 [[Prototype]] 关联的对象。
+* 构造器的原型（显式原型） 
+	* JavaScript仅函数拥有 prototype属性(不可枚举), 准确来说是构造**函数所特有**。
+	* [[prototype]] 和 prototype 不是同一个东西
 
 #### 为什么一个对象需要关联_(原型链)_到另一个对象？这样做有什么好处？
 
@@ -590,6 +606,217 @@ new Fun() 这个函数调用实际上并没有直接创建关联，这个关联�
 Object.create(..)可以更加直接的方法创建关联    
 一般称为 原型继承 它常常被视为动态语言版本的类继承。但是这个术语严重影响了大家对于 JavaScript 机制真实原理的理解。  
 委托更适合更加准确地描述 JavaScript 中对象的关联机制。  
+
+##### 利用隐式混入模仿 类的复制  
+```JavaScript
+
+	var Something = {
+		cool: function() {
+			this.greeting = "Hello World";
+			this.count = this.count ? this.count + 1 : 1;
+		}
+	};
+	var Another = {
+		cool: function() {
+			// 隐式把 Something 混入 Another
+			Something.cool.call( this ); // 可以测试这里的this是指什么？
+		}
+	};
+	Another.cool();
+	Another.greeting; // "Hello World"
+	Another.count;    // 1（count 不是共享状态）
+```
+
+#### 使用Object.create(...)进行关联 ES5
+```JavaScript
+
+	//Shape - superclass
+	function Shape() {
+	  this.x = 0;
+	  this.y = 0;
+	}
+
+	Shape.prototype.move = function(x, y) {
+	    this.x += x;
+	    this.y += y;
+	    console.log(this.x);
+	    console.log(this.y);
+	    console.info("Shape moved.");
+	};
+	
+	// Rectangle - subclass
+	function Rectangle() {
+	  Shape.call(this); //call super constructor.
+	}
+	
+	// subclass extends superclass
+	// ES6 之前需要抛弃默认的 Bar.prototype
+	Rectangle.prototype = Object.create(Shape.prototype); // 会凭空创建一个“新”对象(Shape.prototype)并把新对象内部的 [[Prototype]] 关联到你指定的对象
+	Rectangle.prototype.constructor = Rectangle;// 避免 constructor 绑定到 Shape
+	// ES6 开始可以直接修改现有的 Bar.prototype
+	// Object.setPrototypeOf( Rectangle.prototype, Shape.prototype );
+	var rect = new Rectangle();// 因为这里执行了一次，所以 Rectangle 为 0;
+	
+	rect.move(1, 1); //"Shape moved." 1 , 1
+	rect.move(1, 1); //"Shape moved." 2 , 2
+	rect.move(1, 1); //"Shape moved." 3 , 3
+```   
+
+上面的例子  
+Object.create(..) 会创建一个新对象（Shape.prototype）并把它 [[Prototype]] 关联到我们指定的对象（Rectangle.prototype）  
+这样可以充分发挥 [[Prototype]] 机制的威力  
+
+如果使用:  
+Rectangle.prototype = Shape.prototype;  
+并不会创建一个关联到 Shape.prototype 的新对象，只是让 Bar.prototype 直接引用 Foo.prototype 对象。  
+
+如果使用:   
+Bar.prototype = new Foo()   
+会创建一个关联到 Bar.prototype 的新对象。但是它使用了 Foo(..) 的“构造函数调用”  
+会生成 .prototype 和 .constructor 引用  
+如果函数 Foo 有一些副作用就会影响到 Bar() 的“后代”，后果不堪设想。  
+
+如果有一个标准并且可靠的方法来修改对象的 [[Prototype]] 关联就好了！  
+ES6 添加了辅助函数 Object.setPrototypeOf(..)，可以用标准并且可靠的方法来修改关联。  
+
+结论：  
+JavaScript并一定不需要类来创建两个对象之间的关系，只需要通过委托来关联对象就足够了。  
+Object.create(..) 和 Object.setPrototypeOf(..) 不包含任何“类的诡计”，所以它可以完美地创建我们想要的关联关系。  
+
+缺陷是：  
+1.兼容问题  
+可以使用Object.create()的 polyfill 代码	  
+if (!Object.create) {Object.create = function(o) {function F(){}F.prototype = o;return new F();};}
+2.API设计变的很诡异
+如果这样 进行 直接委托(关联)，因为是隐藏起来的，所以对代码的可读性是不好的;
+你需要进行 内部委托(关联) 让 API 接口设计更加清晰。  
+
+
+#### 如何查看关联的对象是谁？（面向对象中的:反射）
+instanceof 操作符（只能处理对象（a）和函数（带 .prototype 引用的 Foo）之间的关系  
+
+两个对象（比如 a 和 b）之间是否通过 [[Prototype]] 链关联？  
+isPrototypeOf(..)   
+这样只需要2个对象就可以进行判断他们之间的关系;   
+
+也可以直接获取一个对象的 [[Prototype]] 链。  
+在 ES5 中，标准的方法是：Object.getPrototypeOf( a );
+
+最后 .__ proto__ 也可以检查，（但是是ES6标准，并且性能极差
+看起来很像一个属性，但是实际上它更像一个 getter/setter  
+实际的原理是[[prototype]]  
+
+```JavaScript  
+
+	function Foo() {
+	// ...
+	}
+	Foo.prototype.blah = ...;
+	var a = new Foo();
+	a instanceof Foo; // 在 a 的整条 [[Prototype]] 链中是否有指向 Foo.prototype 的对象？
+	Foo.prototype.isPrototypeOf( a ); // 在 a 的整条 [[Prototype]] 链中是否出现过 Foo.prototype ？
+	Object.getPrototypeOf( a ) === Foo.prototype; // a 的整条 [[Prototype]]  是否与 Foo.prototype相等
+	a.__proto__ === Foo.prototype;
+```
+
+> 最好把 [[Prototype]] 对象关联看作是只读特性，从而增加代码的可读性。
+
+### 面向委托(关联)的JavaScript程序设计
+相比于面向类（或者说面向对象），我会把这种编码风格称为“对象关联”（OLOO，objects linked to other objects）。  
+这是一种极其强大的设计模式  
+和父类、子类、继承、多态等概念完全不同。  
+对象并不是按照父类到子类的关系垂直组织的，而是通过任意方向的委托关联并排组织的。  
+
+例子一：  
+
+```JavaScript
+
+	// 通俗意义上的面向对象的思想
+	class Task {
+		id;
+		// 构造函数 Task() 同名
+		Task(ID) { id = ID; }
+		outputTask() { output( id ); }
+	}
+	class XYZ inherits Task {
+		label;
+		// 构造函数 XYZ()
+		XYZ(ID,Label) { super( ID ); label = Label; }
+		outputTask() {
+			super(); // 调用这个方法的原始版本。outputTask()
+			output( label ); 
+		}
+	}
+	class ABC inherits Task {
+		// ...
+	}
+	// 转换为JavaScript面向委托(关联)的程序设计
+	Task = {
+		setID: function(ID) { this.id = ID; }, // 这里的虽然是被委托（关联），是通用(复用)的，但是 this this 的隐式绑定规则; 运行时 this 仍然会绑定到 XYZ
+		outputID: function() { console.log( this.id ); }
+	};
+	// 让 XYZ 委托(关联) Task
+	XYZ = Object.create( Task );
+	XYZ.prepareTask = function(ID,Label) {
+		this.setID( ID ); // 通过 [[Prototype]] 找到的
+		this.label = Label;
+	};
+	XYZ.outputTaskDetails = function() {
+		this.outputID();
+		console.log( this.label );
+	};
+	// ABC = Object.create( Task );
+	// ABC ... = ...
+```
+
+例子二：  
+```JavaScript
+
+	// JavaScript典型原型面向对象风格
+	function Foo(who) {
+		this.me = who;
+	}
+	Foo.prototype.identify = function() {
+		return "I am " + this.me;
+	};
+	function Bar(who) {
+		Foo.call( this, who );
+	}
+	Bar.prototype = Object.create( Foo.prototype );
+	Bar.prototype.speak = function() {
+		console.log( "Hello, " + this.identify() + "." );
+	};
+	var b1 = new Bar( "b1" ); // 会执行一次，相当于初始化 this会被绑定到 b1
+	var b2 = new Bar( "b2" );
+	b1.speak(); // 会向 [[prototype]] 寻找 speak 方法
+	b2.speak();
+	// JavaScript面向委托(关联)的程序设计
+	Foo = {
+		init: function(who) {
+			this.me = who;
+		},
+		identify: function() {
+			return "I am " + this.me;
+		}
+	};
+	Bar = Object.create( Foo );
+	Bar.speak = function() {
+		console.log( "Hello, " + this.identify() + "." );
+	};
+	var b1 = Object.create( Bar );
+	b1.init( "b1" );
+	var b2 = Object.create( Bar );
+	b2.init( "b2" );
+	b1.speak();
+	b2.speak();
+```
+
+结论：  
+
+如果JavaScript使用典型原型面向对象风格，会使得思维模型和关系变得复杂。  
+而使用对象关联风格代码会使得思维模型更加简洁。  
+可以使得你更加关注一件事：对象之间的关联关系。
+
 
 
 #### 所有"构造器/函数"的__ proto__(对象的内部原型)都指向 Function.prototype，它是一个空函数（Empty function）
@@ -830,28 +1057,6 @@ ES6提供了一个更简单和更清晰的语法来创建对象并处理继承�
 	// 'Mitzie barks.'
 	d.speak();
 ```
-##### 利用隐式混入模仿 类的复制  
-```JavaScript
-
-	var Something = {
-		cool: function() {
-			this.greeting = "Hello World";
-			this.count = this.count ? this.count + 1 : 1;
-		}
-	};
-	var Another = {
-		cool: function() {
-			// 隐式把 Something 混入 Another
-			Something.cool.call( this ); // 可以测试这里的this是指什么？
-		}
-	};
-	Another.cool();
-	Another.greeting; // "Hello World"
-	Another.count;    // 1（count 不是共享状态）
-```
-
-
-
 
 *** 
 
@@ -863,12 +1068,11 @@ ES6提供了一个更简单和更清晰的语法来创建对象并处理继承�
 
 #### <div id="gouzhaohans">JavaScript中构造函数</div>
 
-######　JavaScript中构造函数
 * 只是使用 new 操作符时被调用的函数。  
 * 并不会属于某个类，也不会实例化一个类。
 * 甚至都不能说是一种特殊的函数类型，它们只是仅当使用 new 时，函数调用会变成“构造函数调用”。  
 
-######　当代码 new fun(...) 执行时：  
+#####　当代码 new fun(...) 执行时：  
 
 1. 一个新对象被创建。
 	* 它继承自 fun.prototype（这个新对象会被执行 [[ 原型 ]] 连接。
@@ -881,7 +1085,8 @@ ES6提供了一个更简单和更清晰的语法来创建对象并处理继承�
 	*  用户如果想覆盖这个返回值，可以自己选择返回一个普通对象来覆盖。
 4. 如果构造函数没有返回对象，那么new出来的结果为步骤1创建的对象。
 
-> **普遍意义上的构造函数** 例如: C#   
+> **普遍意义上的构造函数**  
+> 例如: C#   
 > 创建和初始化使用类创建的一个对象的一种特殊方法。  
 > 是一个类里用于建立对象的特殊子程序  
 > 函数名称一般与它所属的类的名称相同。    
