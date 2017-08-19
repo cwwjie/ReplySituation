@@ -6,6 +6,8 @@
 * [作用域](#scopes)
 * [this](#this)
 * [对象](#Object)
+* [函数](#function)
+* [类型](#Types)
 * [原型链](#Prototype_chain)
 * [面向委托(关联)思想 与 仿Class 思想](#Class)
 ***
@@ -380,13 +382,14 @@ myObj.key = value;
 
 > 没有所谓的“基本类型”、“原始类型”
 
-#### 类型
-* 基本类型
+#### 值类型
+* 基本内置值类型（7种）
 	* string
 	* number
 	* boolean
 	* null
 	* undefined
+	* object
 	* [Symbol](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol)
 * 内置对象
 	* String
@@ -403,6 +406,12 @@ myObj.key = value;
 但是在 JavaScript 中，它们实际上只是一些内置函数。  
 这些内置函数可以当作构造函数来使用，从而可以构造一个对应子类型的新对象。
 
+null 指空值（empty value）  
+undefined 指没有值（missing value）  
+undefined 指从未赋值
+null 指曾赋过值，但是目前没有值
+
+
 ```js
 // 基本类型
 var strPrimitive = "I am a string";	
@@ -410,6 +419,30 @@ strPrimitive.length // 会自动进行转换为 new String("I am a string")
 // 内置对象
 var strObject = new String( "I am a string" );
 ```
+
+### <div id="Types">对象类型<div>
+对象类型转换  
+
+typeof运算符来查看值的类型   
+在对变量执行typeof操作时，得到的结果并不是该变量的类型，而是该变量持有的值的类型，因为JavaScript中的变量没有类型。  
+所以变量在未持有值的时候为undefined。 
+
+null类型不在此列。比较特殊  
+typeof null === "object"; // 正确的返回结果应该是 "null" 但这个bug存在了二十年  
+typeof function a(){ /* .. */ } === "function"; // 它实际上是object的一个“子类型” 原因是它有一个内部属性[[Call]]  
+
+所有 typeof 返回值为"object"的对象（如数组）都包含一个内部属性 [[Class]]  
+这个属性无法直接访问，一般通过Object.prototype.toString(..)  
+
+
+NaN 是一个数值，表示一个不能产生正常结果的运算结果！
+
+JavaScript 字符类型 Unicode  
+UTF-8 就是在互联网上使用最广的一种 Unicode 的实现方式
+
+if 判断为假的情况 flase null 0 "" undefined NaN  
+
+js 乘除法 是优先级大于 加减法  
 
 #### 对象的值(属性) // 方法
 
@@ -510,12 +543,16 @@ Object.defineProperty(
 );
 console.log(myObject.a)
 console.log(myObject.b)
+
 // 这个方法可以用来检测一个对象是否含有特定的自身属性；该方法会忽略掉那些从原型链上继承到的属性。
 myObject.hasOwnProperty('a');   // true
+
 // propertyIsEnumerable(..) 会检查属性是否直接存在于对象中（该方法会忽略掉那些从原型链上继承到的属性。）并且 enumerable:true 
 myObject.propertyIsEnumerable( "a" ); // true
+
 // 包含所有可枚举属性 但是只会查找对象直接包含的属性 原型链
 Object.keys( myObject ); // ["a"]
+
 // ，包含所有属性，无论它们是否可枚举。但是只会查找对象直接包含的属性 原型链
 Object.getOwnPropertyNames( myObject ); // ["a", "b"]
 ```
@@ -544,7 +581,7 @@ myObject.hasOwnProperty( "a" ); // true
 
 JavaScript 常被描述为一种基于原型的语言 (prototype-based language)  
 
-原型链接只有在检索值的时候才被用到
+原型链接只有在检索值的时候才被用到！
 
 通过对象字面量创建的对象都连接到 Object.prototype 这个JavaScript中的标准对象中
 
@@ -646,6 +683,34 @@ console.log(p.__proto__ === Person.prototype) // true
 console.log(p.__proto__ === p.constructor.prototype) // false {getName: function() {}}
 // p.constructor 是 Person 返回一个指向创建了该对象原型的函数引用。
 ```
+
+*** 
+## <div id="function">函数<div>
+所谓的编程就是将一组需求分解成一组函数与数据结构。
+
+JavaScript最好的特性，就是他对函数的实现。
+
+* 函数也是对象
+	* 拥有 [[prototype]] 隐藏链接
+* 每个函数创建时候，附有2个隐藏的属性  
+	1. 函数的上下文  
+	2. 实现函数行为的代码（既调用属性  
+* 每个函数对象在创建时，也随带一个 prototype 属性、
+	* prototype属性的值为该函数的对象
+	* 
+
+调用时    
+
+* 除了形式的参数，每个函数接收两个附加的参数（this，argument类数组）  
+* 当一个函数被保存为对象的一个属性时（方法），此时被调用，this会被绑定到该对象。（注意会有丢失  
+	* JavaScript有个很优秀的特性就是级联、就是方法调用 返回 this，这样可以调用一个对象的多个方法！
+* var that/self = this; 可以解决函数调用时被绑定到全局对象（这是程序设计的错误
+
+JavaScript可以利用闭包实现函数的记忆，其他的语言也行。
+
+try/catch 虽然会增加消耗，但是这可以构建稳健的代码
+
+for in 在原型上表现很糟糕	，应该使用 hasOwnProperty
 
 *** 
 ## <div id="Class">面向委托(关联)思想 与 仿Class 思想<div>
@@ -1030,8 +1095,8 @@ super(..)函数非常优雅。对象之间的关联关系变的简洁。
 	* 它继承自 fun.prototype（这个新对象会被执行 [[ 原型 ]] 连接。
 2. 构造函数 fun 被执行。
 	* 相应的传参会被传入。
-	* 活动记录（执行上下文）(this)会被指定为这个新实例。（这个新对象会绑定到函数调用的 this。
-	* new fun 等同于 new fun(), 只能用在不传递任何参数的情况。
+	* 活动记录（执行上下文）(this) 会被绑定到新创建的对象。
+	* new fun 是相等的 new fun()。
 3. 如果构造函数返回了一个 "对象"，那么这个对象会取代整个new出来的结果。
 	*  一般情况下构造函数不返回任何值
 	*  用户如果想覆盖这个返回值，可以自己选择返回一个普通对象来覆盖。
@@ -1047,12 +1112,15 @@ super(..)函数非常优雅。对象之间的关联关系变的简洁。
 
 ### 暂时
 
-NaN 是一个数值，表示一个不能产生正常结果的运算结果！
+依赖注入（dependency injection）
 
-JavaScript 字符类型 Unicode  
-UTF-8 就是在互联网上使用最广的一种 Unicode 的实现方式
+```js
+function doSomethingCool(FeatureXYZ) { 
+    var helper = FeatureXYZ || 
+        function() { /*.. default feature ..*/ }; 
+    var val = helper(); 
+    // .. 
+}
+```
 
-if 判断为假的情况 flase null 0 "" undefined NaN  
-
-js 乘除法 是优先级大于 加减法
-
+在JavaScript中变量不可能成为指向另一个变量的引用。
