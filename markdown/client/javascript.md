@@ -383,7 +383,7 @@ myObj.key = value;
 > 没有所谓的“基本类型”、“原始类型”
 
 #### 值类型
-* 基本内置值类型（7种）
+* 基本内置值类型/原始数据类型（7种）
 	* string
 	* number
 	* boolean
@@ -391,7 +391,7 @@ myObj.key = value;
 	* undefined
 	* object
 	* [Symbol](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Symbol)
-* 内置对象
+* 内置对象/引用类型
 	* String
 	* Number
 	* Boolean
