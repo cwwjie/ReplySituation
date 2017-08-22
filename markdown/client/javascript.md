@@ -746,36 +746,34 @@ Another.count;    // 1（count 不是共享状态）
 
 #### 使用Object.create(...)进行关联 ES5
 ```js
-//Shape - superclass
+// 超类
 function Shape() {
   this.x = 0;
   this.y = 0;
 }
-
 Shape.prototype.move = function(x, y) {
     this.x += x;
     this.y += y;
     console.log(this.x);
     console.log(this.y);
-    console.info("Shape moved.");
 };
 
-// Rectangle - subclass
+// 子类
 function Rectangle() {
   Shape.call(this); //call super constructor.
 }
+// 会凭空创建一个“新”对象(Shape.prototype)并把新对象内部的 [[Prototype]] 关联到你指定的对象
+Rectangle.prototype = Object.create(Shape.prototype);
+// 避免 constructor 绑定到 Shape
+Rectangle.prototype.constructor = Rectangle;
 
-// subclass extends superclass
-// ES6 之前需要抛弃默认的 Bar.prototype
-Rectangle.prototype = Object.create(Shape.prototype); // 会凭空创建一个“新”对象(Shape.prototype)并把新对象内部的 [[Prototype]] 关联到你指定的对象
-Rectangle.prototype.constructor = Rectangle;// 避免 constructor 绑定到 Shape
-// ES6 开始可以直接修改现有的 Bar.prototype
-// Object.setPrototypeOf( Rectangle.prototype, Shape.prototype );
-var rect = new Rectangle();// 因为这里执行了一次，所以 Rectangle 为 0;
+// ES 可以这么做 Object.setPrototypeOf( Rectangle.prototype, Shape.prototype );
+// 因为这里执行了一次，相当于初始化，所以 Rectangle 为 0;
+var rect = new Rectangle();
 
-rect.move(1, 1); //"Shape moved." 1 , 1
-rect.move(1, 1); //"Shape moved." 2 , 2
-rect.move(1, 1); //"Shape moved." 3 , 3
+rect.move(1, 1); // 1 , 1
+rect.move(1, 1); // 2 , 2
+rect.move(1, 1); // 3 , 3
 ```   
 
 上面的例子  
