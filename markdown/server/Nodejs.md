@@ -43,6 +43,14 @@
 *  supervisor myapp.js
 
 
+node.js 文件会对加载的文件进行包装，一定会包含 require exports module __filename __dirname 变量  
+
+所以 require 没有定义却可以存在、  
+
+module 的代表模块自己
+
+exports 是 module 的对象
+
 
 
 
