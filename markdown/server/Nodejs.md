@@ -1,9 +1,13 @@
 # [Node.js](http://nodejs.cn/api/)
 
-## 目录
-
-* [读取文件](#00)
-* [操作相关 *永久启动 自动重启*](#01)
+## 重点
+1. HTTP (TCP/WebSocket)  
+2. Buffer 与 stream流
+3. Commonjs 规范  
+4. node.js 异步编程
+5. coding速度、对api和常见库的选择和熟悉程度、遇到问题是如何调试的、边界情况和错误处理等等
+6. node.js 内存   
+7. node.js 进程  
 
 ## <div id="00">读取文件</div>
 [异步读取 <br> fs.readFile(path[, options], callback) ](http://nodejs.cn/api/fs.html#fs_fs_readfile_path_options_callback)
@@ -52,24 +56,21 @@ exports 是 module 的对象
 
 ## 请用你自己的话叙述一遍 Buffer 是什么？
 
-网络协议请求与流，数据库，编码格式，处理图片与文件，  
-
-属于堆外储存，所以有分配策略。（JavaScript 与 C++ 实现  
-
-类数组 0 - 255 （不能当作字符串拼接  
-
+类数组结构<buffer d3 e1 r2 r5>（不能当作字符串拼接  
 Buffer.concat();  
 
+属于堆外储存，所以有分配策略。（JavaScript 与 C++ 实现  
 Buffer 的性能是很好的、  
 
+作用: 网络协议请求与流，数据库，编码格式，处理图片与文件，  
 
-TCP服务器和HTTP服务器有什么区别？
+## node服务器
+TCP服务器和HTTP服务器有什么区别？  
 
-TCP socket 属于传输层协议，构建高效网络应用
+TCP socket 属于传输层协议，构建高效网络应用  
 
-WebSocket 与 Node 非常兼容，因为事件循环的原因，长轮询
-
-实时要求比较高的应用来说，在线游戏、在线证券、设备监控、新闻在线播报、RSS 订阅推送等等
+WebSocket 与 Node 非常兼容，因为事件循环的原因，长轮询  
+实时要求比较高的应用来说，在线游戏、在线证券、设备监控、新闻在线播报、RSS 订阅推送等等  
 
 Sec-WebSocket-Key 校验
 
