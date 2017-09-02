@@ -74,8 +74,8 @@ IP间的通信倚赖MAC地址
 所以在中转时候，利用下一台设备的MAC地址来搜寻目标，这就是 [ARP协议](https://baike.baidu.com/item/ARP/609343?fr=aladdin&fromid=1742212&fromtitle=ARP%E5%8D%8F%E8%AE%AE)（地址解析协议/Address Resolution Protocol）
 
 ## 未分类
- 
 
+* cookie是什么?用来干嘛的？
 
 
 

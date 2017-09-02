@@ -1,0 +1,18 @@
+.room-Nav div {
+    padding-bottom: 20px;
+    width: 120px;
+    height: 20px;
+    color:#5bc339;
+    display: inline-block;
+}
+.room-Main {
+    height: 200px;
+    width: 500px;
+    background: rgba(54, 182, 178, 0.47);
+}
+.room-Main>div {
+    display: none;
+}
+.room-Main .selectRoom {
+    display: block;
+}
