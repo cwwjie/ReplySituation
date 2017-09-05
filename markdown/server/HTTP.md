@@ -1,19 +1,16 @@
 # HTTTP协议
 
-## 目录
 
-* HTTP 1.1
-* HTTP常见问题
-* 网络基础TCP/IP
-* 未分类
+## 未分类
+
+* HTTP是什么？为什么要学习HTTP？
+* cookie 是什么?用来干嘛的？为什么会有cookie？
+
+
+
+
 
 ## HTTP是什么？请用自己的话进行概括
-
-
-HTTP/0.9  
-HTTP/1.0(正式版)  
-HTTP/1.1(主流)  
-HTTP/2.0(正在制订)   
 
 * 请求报文
 	* 起始头  
@@ -73,9 +70,6 @@ IP间的通信倚赖MAC地址
 但是一般是需要倚赖多台设备(多个MAC地址)才能连接到对方。  
 所以在中转时候，利用下一台设备的MAC地址来搜寻目标，这就是 [ARP协议](https://baike.baidu.com/item/ARP/609343?fr=aladdin&fromid=1742212&fromtitle=ARP%E5%8D%8F%E8%AE%AE)（地址解析协议/Address Resolution Protocol）
 
-## 未分类
-
-* cookie是什么?用来干嘛的？
 
 
 

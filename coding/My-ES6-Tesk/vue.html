@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="./src/index.css">
+</head>
+<body>
+    <div id="myRoom">
+        <div class="room-Nav">
+            <div class="room-Nav-div" v-for="Nav in room">
+                {{ Nav.name }}
+            </div>
+        </div>
+        <div class="room-Main">
+            <div id="mainRoom0" class="room-Main-div selectRoom" v-for="Nav in room">房间1<input type="text"></div>
+            <!-- <div id="mainRoom0" class="room-Main-div selectRoom">房间1<input type="text"></div>
+            <div id="mainRoom1" class="room-Main-div">房间2<input type="text"></div>
+            <div id="mainRoom2" class="room-Main-div">房间3<input type="text"></div> -->
+        </div>
+    </div>
+</body>
+<script src="https://unpkg.com/vue"></script>
+<script src="./src/vue.js"></script>
+</html>
