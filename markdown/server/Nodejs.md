@@ -9,6 +9,14 @@
 6. node.js 内存   
 7. node.js 进程  
 
+## 思考问题 
+[Node.js的优势是什么?](https://www.zhihu.com/question/19653241)  
+什么是异步I/O？   
+什么是commonjs规范?  module  require 基本用法 加载规则 CMD AMD 区别是什么？   请用自己的话描述一遍？  
+
+
+
+
 ## <div id="00">读取文件</div>
 [异步读取 <br> fs.readFile(path[, options], callback) ](http://nodejs.cn/api/fs.html#fs_fs_readfile_path_options_callback)
 
