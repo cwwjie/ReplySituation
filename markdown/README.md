@@ -1,5 +1,7 @@
 # 笔记区域
 
+目标:写笔记、文章输出，能够加深记忆
+
 ## 目录
 
 * [Web前端](https://github.com/cwwjie/ReplySituation/tree/master/markdown/client)
