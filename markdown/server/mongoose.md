@@ -2,7 +2,10 @@
 mongoose 怎么用？
 
 [schema 是什么？有什么用？](#schema)  
-mongoose.model 是什么来的？
+
+为什么不直接连接数据库而是建schema？ 这样设计有什么好处？
+
+mongoose.model 是什么来的？  
 
 ***
 ***
