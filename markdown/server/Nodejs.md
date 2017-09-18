@@ -13,8 +13,7 @@
 [Node.js的优势是什么?](https://www.zhihu.com/question/19653241)  
 什么是异步I/O？   
 什么是commonjs规范?  module  require 基本用法 加载规则 CMD AMD 区别是什么？   请用自己的话描述一遍？  
-
-
+http.createServer是什么?为什么能够传入express？[http.ClientRequest类](http://nodejs.cn/api/http.html#http_class_http_clientrequest)是什么？[http.IncomingMessage类](http://nodejs.cn/api/http.html#http_class_http_incomingmessage)是什么？  
 
 
 ## <div id="00">读取文件</div>

@@ -4,6 +4,15 @@
 
 * [Webpack Node.js 构建自动化流程](#00)
 
+## Code Splitting 代码分割
+
+### 什么是代码分割？有哪几种方式可以实现代码分割？  
+
+—— Entry Points  
+—— Prevent Duplication  
+—— Dynamic Imports  
+实际上第一种和第二种是连在一起的  
+
 
 
 
