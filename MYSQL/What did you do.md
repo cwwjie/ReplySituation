@@ -1,3 +1,8 @@
+### 为什么在mysql上面查出来的汉字都是乱码？
+
+charset='utf8' --- √
+
+
 
 ### MySQL自带库作用
 
@@ -24,6 +29,13 @@ performance_schema库 <!-- 提供 --> 对于新增和删除监控事件点都非
 sys库 <!-- 是 --> 5.7新增
 sys库 <!-- 包含 --> 存储过程、自定义函数以及视图
 sys库 <!-- 帮助我们 --> 快速的了解系统的元数据信息
+
+
+
+
+
+
+
 
 
 
@@ -70,6 +82,16 @@ CHAR 保存 检索  <!-- is --> 尾部的空格仍保留
 TEXT 和 VARCHAR  <!-- is --> 类似 
 
 
+
+
+
+
+
+
+
+
+
+
 ### MySQL 基础操作
 
 MySQL 创建数据 <!-- 是 --> CREATE DATABASE todo;
@@ -87,12 +109,26 @@ MySQL 返查看当前数据库下的所有表的名称  <!-- is --> show tables;
 
 
 
+
+
+
+
+
+
+
 ### python func(* args, ** kwargs)   参数作用？
 
 
 带 *  前缀的参数 <!-- 可以接收 --> 可变数量的参数 类似 tuple
 
 带 ** 前缀的参数 <!-- 可以接收 --> 所有正常形参之外的其他的关键字参数 类似 dict
+
+
+
+
+
+
+
 
 
 
@@ -112,6 +148,15 @@ def fun():
 <!-- 相当于 -->
 
 fun = Decorator(fun)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -146,11 +191,27 @@ Flask对象被实例化后 模块层次上 <!-- is --> 应用 处于 配置状�
 flask.current_app <!-- is --> 指向正在处理请求的应用
 
 
+
+
+
+
+
+
+
 ### 为什么会有 Flask 应用环境?
 
 Flask 设计的初衷之一 <!-- is --> 一个 Python 进程中拥有多个应用
 
 显式地到处传递数据到应用 <!-- is --> 与其他库的设计理念冲突
+
+
+
+
+
+
+
+
+
 
 
 
@@ -161,6 +222,67 @@ python 游标对象 cursor  <!-- 作用是 --> 执行 结果。 查询 结果。
 python 游标对象 cursor execute 方法  <!-- 作用是 --> 执行一个数据库的查询和命令 。 结果 返回 到缓冲区中
 
 python 游标对象 cursor fetch 方法  <!-- 作用是 --> 执行一个数据库的查询和命令 。 结果 返回 到缓冲区中
+
+
+
+
+
+
+
+
+
+
+### 如何 修改 mysql数据库字符集为UTF8？
+
+—— 如何找到MySQL 安装目录 ?
+
+mysql> show variables like '%dir%';
+
+mysql> SHOW VARIABLES LIKE 'collation%';
+
+—— 如何找到 windows MySQL 数据数据文件目录及my.ini位置？
+
+可通过windows服务所对应mysql启动项，查看其对应属性->可执行文件路径，获取my.ini路径。
+
+"C:\Program Files\MySQL\MySQL Server 5.7\bin\mysqld.exe" --defaults-file="C:\ProgramData\MySQL\MySQL Server 5.7\my.ini" MySQL57
+
+—— 如何查看数据库编码格式？
+
+show variables like "cha%";
+
+show variables like 'character_set_database';
+
+—— 查看数据表的编码格式？
+
+show create table <表名>;
+
+—— 修改数据库字符集
+
+create database <数据库名> character set utf8;
+
+—— 修改数据库字符集
+
+alter database <数据库名> character set utf8;
+
+—— 修改数据表格编码格式
+
+alter table <表名> character set utf8;
+
+
+
+### flask-sqlalchemy 一直乱码报错, 网上的方案都没用怎么办?
+
+方案 —— 用个屁的ORM框架
+
+会就行了!
+
+
+
+
+
+
+
+
 
 
 
@@ -194,6 +316,13 @@ Flask-SQLAlchemy <!-- 有 --> 两种 初始化方法 启动flask 的 app_context
 
 
 
+
+
+
+
+
+
+
 ### SQLAlchemy 怎么学?
 
 结论 <!-- is --> 看别人写的教程比官网好多了..
@@ -203,6 +332,15 @@ ConnectionPooling <!-- is --> 连接池
 Dialect <!-- is --> 执行语句
 Schema Type <!-- is --> 表结构
 SQL Expression Language <!-- is --> 将该对象转换成SQL语句
+
+
+
+
+
+
+
+
+
 
 
 
@@ -228,6 +366,11 @@ unique      如果设为True，这列不重复
 index       如果设为True，创建索引，提升查询效率
 nullable    如果设为True，允许空值
 default     为这列定义默认值
+
+
+
+
+
 
 
 ### [基本增删查改操作 ](http://flask-sqlalchemy.pocoo.org/2.1/queries/)
@@ -314,27 +457,10 @@ paginate()      返回paginate对象，此对象用于分页
 
 
  
-Python Flask Todo 应用 需要的数据  <!-- 是 --> id - description - category - priority - create date
-
-
-CREATE TABLE `todo_item` (
-	`item_id` INT NOT NULL AUTO_INCREMENT,
-	`item_description` VARCHAR(50) NOT NULL,
-	`item_category` VARCHAR(10) NOT NULL,
-	`item_priority` INT NOT NULL,
-	`item_create_date` CHAR(14) NOT NULL,
-	PRIMARY KEY ( `item_id` )
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 
-INSERT INTO todo_item ( item_description, item_category, item_priority, item_create_date )
-VALUES
-( "学习MySQL", "未分类", 1, "1483228800000" );
 
-
-
-select * from todo_item;
 
 
 
@@ -364,12 +490,45 @@ select * from todo_item;
 
 
 
+Python Flask Todo 应用 需要的数据  <!-- 是 --> id - description - category - priority - create date
+
+
+CREATE TABLE `todo_item` (
+	`item_id` INT NOT NULL AUTO_INCREMENT,
+	`item_description` VARCHAR(50) NOT NULL,
+	`item_category` VARCHAR(10) NOT NULL,
+	`item_priority` INT NOT NULL,
+	`item_create_date` CHAR(14) NOT NULL,
+	PRIMARY KEY ( `item_id` )
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+INSERT INTO todo_item ( item_description, item_category, item_priority, item_create_date )
+VALUES
+( "学习MySQL", "未分类", 1, "1483228800000" );
 
 
 
 
 
 
-[MySQL更新中文列：1366Incorrectstringvalue问题解决](https://www.2cto.com/database/201506/404703.html)
+
+
+
+
+
+
+
+
+
+API 接口 先只写一个
+
+如何查询所有?
+
+
+
+
+
 
 
