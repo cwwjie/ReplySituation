@@ -1,5 +1,53 @@
 
 
+### RxJS 应用场景
+
+协同工具的任务看板
+
+由若干个小方块构成
+
+信息量较大，导致查询较复杂，其中有部分数据是可复用的
+
+实时交互、某个标签定义修改了文字，需要去立刻更新当前界面所有的引用部分。
+
+数据查询 是由 前端组装
+
+
+### 同步、异步代码的统一
+
+WebSocket 更新推送，只拉取无缓存的实体
+
+查询同一种数据，可能是同步的（缓存中获取），可能是异步的（AJAX获取） 如何清晰地定义这种组合关系？
+
+一组数据经过多种规则（过滤，排序）之后，又需要插入新的数据（主动新增了一条，WebSocket推送了别人新建的一条），这些新增数据都不能直接加进来，而是也必须走一遍这些规则，再合并到结果中。
+
+
+
+### Promise 与 RxJS
+
+Promise 只有一个返回值，响应一次
+
+Observable 可以有多个返回值，响应多次
+
+
+
+### 创建 Observables
+—— Rx.Observable.create 接收一个参数：subscribe 函数
+
+### 订阅 Observables
+—— observable.subscribe(x => console.log(x));
+
+### 执行 Observables
+—— 只有在每个观察者订阅后才会执行
+—— Observable 执行可以传递三种类型的值：
+	"Next" 通知： 发送一个值，比如数字、字符串、对象，等等。
+	"Error" 通知： 发送一个 JavaScript 错误 或 异常。
+	"Complete" 通知： 不再发送任何值。
+### 清理 Observables
+—— var subscription = observable.subscribe(x => console.log(x));
+subscription.unsubscribe() 可以取消进行中的执行：
+
+
 ### RxJS 
 
 RxJS <!-- 是 --> 一个库
@@ -49,6 +97,21 @@ RxJS Schedulers (调度器) <!-- 允许 -->  发生计算时进行协调
 
 ### 结论
 
-ReJS 是类似于 EventEmitters 的 多个值 Promise 库，本质是一种观察者的设计模式。
-在 Node.js 里可能会很有用。
+EventEmitters
+Redux
+Mobx
+RxJS
+具体实现不一样 思想是 通的，发布订阅
+
+
+这些理念都是为了解决什么问题?
+
+1. 如何模块化
+2. 模块间如何通信
+
+
+
+
+
+
 
